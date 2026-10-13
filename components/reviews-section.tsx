@@ -136,72 +136,75 @@ export function ReviewsSection({ className }: ReviewsSectionProps) {
         </div>
 
         {/* ========================================================== */}
-        {/* 3. FLOATING WHITE REVIEW CARD WITH SIDE ARROWS             */}
+        {/* 3. FLOATING LUXURY REVIEW CARD WITH SIDE ARROWS            */}
         {/* ========================================================== */}
         <div className="relative max-w-2xl lg:max-w-[700px] mx-auto flex items-center justify-center">
           {/* Circular Left Arrow Button */}
           <button
             type="button"
             onClick={handlePrev}
-            className="absolute left-1 sm:-left-5 md:-left-6 z-20 w-8.5 h-8.5 sm:w-11 sm:h-11 rounded-full bg-white text-[#18181B] shadow-[0_12px_32px_rgba(0,0,0,0.35)] flex items-center justify-center hover:scale-108 active:scale-95 transition-all cursor-pointer border border-black/5"
+            className="absolute left-1 sm:-left-5 md:-left-6 z-20 w-8.5 h-8.5 sm:w-11 sm:h-11 rounded-full bg-[#181A20]/95 text-[#F5F5F7] shadow-[0_12px_32px_rgba(0,0,0,0.5)] flex items-center justify-center hover:bg-[#D4AF37] hover:text-[#121316] hover:border-[#D4AF37] active:scale-95 transition-all cursor-pointer border border-[#D4AF37]/40 backdrop-blur-md"
             aria-label="Previous review"
           >
             <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
-          {/* Centered Floating White Card */}
+          {/* Centered Floating Luxury Card */}
           <div
             key={currentReview.id}
-            className="w-full rounded-2xl sm:rounded-3xl bg-white text-[#18181B] px-8 py-5 sm:p-8 md:p-9 shadow-[0_25px_60px_rgba(0,0,0,0.45)] border border-black/5 animate-in fade-in duration-300 relative"
+            className="w-full rounded-2xl sm:rounded-3xl bg-[#181A20]/95 backdrop-blur-xl text-[#F5F5F7] px-8 py-5 sm:p-8 md:p-9 shadow-[0_25px_60px_rgba(0,0,0,0.6),0_0_30px_rgba(212,175,55,0.06)] border border-[#D4AF37]/30 animate-in fade-in duration-300 relative overflow-hidden"
           >
+            {/* Subtle Top Gold Highlight Shimmer */}
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/50 to-transparent pointer-events-none" />
+
             {/* Top Row: User Avatar, Name, Rating & Verified Badge */}
             <div className="flex items-center justify-between gap-3 pb-3.5 sm:pb-4">
               <div className="flex items-center gap-2.5 sm:gap-3.5">
                 {/* Circular User Avatar */}
-                <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#F3F4F6] flex items-center justify-center text-[#6B7280] shrink-0 border border-black/5">
+                <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-[#1F222B] flex items-center justify-center text-[#D4AF37] shrink-0 border border-[#D4AF37]/30 shadow-inner">
                   <User className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2]" />
                 </div>
 
-                {/* Customer Name in Rust-Amber + 5 Stars */}
+                {/* Customer Name in Warm Gold + 5 Stars */}
                 <div>
-                  <h3 className="text-[11px] sm:text-[13px] font-sans font-bold tracking-[0.14em] uppercase text-[#7C2D12] leading-tight">
+                  <h3 className="text-[11px] sm:text-[13px] font-sans font-bold tracking-[0.14em] uppercase text-[#E6C687] leading-tight">
                     {currentReview.name}
                   </h3>
                   {/* 5 Stars */}
                   <div
-                    className="flex items-center gap-0.5 mt-1 text-[#F59E0B]"
+                    className="flex items-center gap-0.5 mt-1 text-[#D4AF37]"
                     aria-label={`${currentReview.rating} out of 5 stars`}
                   >
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        className="w-3 h-3 sm:w-4 sm:h-4 fill-[#F59E0B] stroke-none"
+                        className="w-3 h-3 sm:w-4 sm:h-4 fill-[#D4AF37] stroke-none"
                       />
                     ))}
                   </div>
                 </div>
               </div>
 
-              {/* Verified Checkmark Badge */}
+              {/* Verified Checkmark Badge in Gold */}
               <div
-                className="w-5.5 h-5.5 sm:w-7 sm:h-7 rounded-full bg-[#7C2D12] text-white flex items-center justify-center shadow-xs shrink-0"
+                className="w-5.5 h-5.5 sm:w-7 sm:h-7 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#B8932C] text-[#121316] flex items-center justify-center shadow-xs shrink-0"
                 title="Verified Guest Stay"
               >
-                <Check className="w-3 h-3 sm:w-4 sm:h-4 stroke-[2.75]" />
+                <Check className="w-3 h-3 sm:w-4 sm:h-4 stroke-[3]" />
               </div>
             </div>
 
             {/* Quotation Body */}
-            <p className="text-xs sm:text-sm md:text-[14.5px] font-sans text-[#27272A] leading-[1.65] tracking-normal font-normal">
+            <p className="text-xs sm:text-sm md:text-[14.5px] font-sans text-[#E4E4E7] leading-[1.7] tracking-normal font-normal">
               &ldquo;{currentReview.review}&rdquo;
             </p>
 
             {/* Stay Context Footer */}
-            <div className="mt-3.5 pt-3 border-t border-zinc-100 flex items-center justify-between gap-2 text-[10.5px] sm:text-[11px] text-[#71717A]">
-              <span className="font-medium text-[#18181B] truncate">
+            <div className="mt-3.5 pt-3 border-t border-[#2E3038] flex items-center justify-between gap-2 text-[10.5px] sm:text-[11px] text-[#A1A1AA]">
+              <span className="font-medium text-[#C5A880] truncate">
                 {currentReview.branch}
               </span>
-              <span className="px-2 py-0.5 rounded-full bg-[#F4F4F5] text-[#52525B] font-medium shrink-0">
+              <span className="px-2.5 py-0.5 rounded-full bg-[#121316] text-[#D4AF37] border border-[#D4AF37]/30 font-medium shrink-0">
                 {currentReview.stayType}
               </span>
             </div>
@@ -211,7 +214,7 @@ export function ReviewsSection({ className }: ReviewsSectionProps) {
           <button
             type="button"
             onClick={handleNext}
-            className="absolute right-1 sm:-right-5 md:-right-6 z-20 w-8.5 h-8.5 sm:w-11 sm:h-11 rounded-full bg-white text-[#18181B] shadow-[0_12px_32px_rgba(0,0,0,0.35)] flex items-center justify-center hover:scale-108 active:scale-95 transition-all cursor-pointer border border-black/5"
+            className="absolute right-1 sm:-right-5 md:-right-6 z-20 w-8.5 h-8.5 sm:w-11 sm:h-11 rounded-full bg-[#181A20]/95 text-[#F5F5F7] shadow-[0_12px_32px_rgba(0,0,0,0.5)] flex items-center justify-center hover:bg-[#D4AF37] hover:text-[#121316] hover:border-[#D4AF37] active:scale-95 transition-all cursor-pointer border border-[#D4AF37]/40 backdrop-blur-md"
             aria-label="Next review"
           >
             <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -230,8 +233,8 @@ export function ReviewsSection({ className }: ReviewsSectionProps) {
               className={cn(
                 "h-1.5 rounded-full transition-all duration-300 cursor-pointer",
                 activeIndex === idx
-                  ? "w-7 sm:w-8 bg-white shadow-md"
-                  : "w-1.5 bg-white/40 hover:bg-white/70"
+                  ? "w-7 sm:w-8 bg-[#D4AF37] shadow-[0_0_12px_rgba(212,175,55,0.6)]"
+                  : "w-1.5 bg-white/30 hover:bg-white/60"
               )}
               aria-label={`Go to review ${idx + 1}`}
             />
