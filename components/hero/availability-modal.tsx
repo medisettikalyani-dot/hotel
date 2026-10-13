@@ -1,0 +1,327 @@
+"use client";
+
+import * as React from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { format, differenceInDays } from "date-fns";
+import { X, Users, Check, ArrowRight, Info, Phone, MessageSquare, ExternalLink, MapPin, Sparkles } from "lucide-react";
+import { WHATSAPP_CONFIG, CONTACT_PHONE, formatPrice, getBranchBySlug } from "@/lib/constants";
+import { MOCK_ROOMS } from "@/lib/mock-rooms";
+import { cn } from "@/lib/utils";
+import type { BranchFilter } from "./branch-selector";
+import type { FlatTypeFilter } from "./flat-type-selector";
+
+interface AvailabilityModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  checkIn: Date | null;
+  checkOut: Date | null;
+  adults?: number | null;
+  childrenCount?: number;
+  branch?: BranchFilter | null;
+  flatType?: FlatTypeFilter | null;
+  purpose?: string | null;
+}
+
+interface FlatListing {
+  id: string;
+  slug: string;
+  name: string;
+  type: string;
+  branchSlug: "barkas-salala" | "moghal-pura";
+  branchName: string;
+  pricePerNight: number;
+  baseAdults: number;
+  maxAdults: number;
+  maxChildren: number | null;
+  description: string;
+  features: string[];
+  imageUrl: string;
+}
+
+const FURNISHED_FLATS: FlatListing[] = MOCK_ROOMS.map((room) => {
+  const branchObj = room.branchSlug ? getBranchBySlug(room.branchSlug) : undefined;
+  return {
+    id: `${room.slug}-flat`,
+    slug: room.slug,
+    name: room.title,
+    type: `${room.type} Flat`,
+    branchSlug: (room.branchSlug || "moghal-pura") as "barkas-salala" | "moghal-pura",
+    branchName: branchObj ? branchObj.name : "Hyderabad",
+    pricePerNight: room.basePricePerNight,
+    baseAdults: room.baseAdults,
+    maxAdults: room.maxAdults,
+    maxChildren: room.maxChildren,
+    description: room.shortDescription,
+    features: room.amenities.slice(0, 4).map((a) => a.name),
+    imageUrl: `/images/flats/flat-${room.slug}.jpg`,
+  };
+});
+
+export function AvailabilityModal({
+  isOpen,
+  onClose,
+  checkIn,
+  checkOut,
+  adults = null,
+  childrenCount = 0,
+  branch = null,
+  flatType = null,
+  purpose = null,
+}: AvailabilityModalProps) {
+  // Prevent background scrolling
+  React.useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
+  // Handle ESC key
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  const totalGuests = (adults || 0) + (childrenCount || 0);
+  const nights = checkIn && checkOut ? Math.max(1, differenceInDays(checkOut, checkIn)) : 1;
+
+  const branchLabels: Record<string, string> = {
+    all: "All Branches",
+    "barkas-salala": "Barkas Salala",
+    "moghal-pura": "Moghal Pura",
+  };
+
+  const purposeLabels: Record<string, string> = {
+    medical: "Hospital & Medical Stay (Medistay)",
+    tourism: "Tourism & Heritage (Wanderer)",
+    corporate: "Corporate & Executive Stay",
+    family: "Family Vacation & Long Stay",
+  };
+
+  // Inventory filtering
+  const matchingFlats = FURNISHED_FLATS.filter((flat) => {
+    const matchesAdults = adults === null || flat.maxAdults >= adults;
+    const matchesKids = childrenCount === 0 || flat.maxChildren === null || flat.maxChildren >= childrenCount;
+    const matchesBranch = !branch || branch === "all" || flat.branchSlug === branch;
+    const matchesType = !flatType || flatType === "any" || flat.slug === flatType;
+    return matchesAdults && matchesKids && matchesBranch && matchesType;
+  });
+
+  const branchDisplay = branch ? branchLabels[branch] || "All Branches" : "Any Branch";
+  const datesDisplay =
+    checkIn && checkOut
+      ? `${format(checkIn, "d MMM")} – ${format(checkOut, "d MMM yyyy")} (${nights}N)`
+      : "Dates not selected";
+  const guestsDisplay =
+    adults !== null
+      ? `${adults} ${adults === 1 ? "Adult" : "Adults"}${childrenCount ? `, ${childrenCount} ${childrenCount === 1 ? "Child" : "Children"}` : ""}`
+      : "Guests not selected";
+  const flatTypeDisplay =
+    flatType && flatType !== "any" ? flatType.toUpperCase() : "Any Flat Type";
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="availability-modal-title"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-[#121316]/85 backdrop-blur-xs animate-in fade-in duration-200"
+    >
+      <div className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto rounded-2xl bg-[#1C1E24] border border-[#2E3038] text-[#F5F5F7] shadow-2xl p-4 sm:p-7">
+        {/* Header */}
+        <div className="flex items-start justify-between pb-4 border-b border-[#2E3038]">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#D4AF37]" />
+              <span className="text-[10.5px] uppercase tracking-[0.2em] font-sans font-semibold text-[#D4AF37]">
+                Matching Flat Inventory
+              </span>
+            </div>
+            <h2
+              id="availability-modal-title"
+              className="font-heading text-2xl sm:text-3xl font-medium text-[#F5F5F7] mt-1"
+            >
+              Available Flat Categories
+            </h2>
+            <p className="text-xs font-sans text-[#A1A1AA] mt-1">
+              Direct booking inquiry • 20% online advance deposit to reserve • 80% on arrival
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="h-10 w-10 flex items-center justify-center rounded-xs border border-[#2E3038] bg-[#121316] text-[#F5F5F7] hover:text-[#D4AF37] hover:border-[#D4AF37] transition-colors focus:outline-none cursor-pointer"
+            aria-label="Close search results"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Applied Filters Strip */}
+        <div className="flex flex-wrap items-center gap-2 py-3 border-b border-[#2E3038] text-xs font-sans">
+          <span className="text-[#A1A1AA]">Criteria:</span>
+          <span className="px-2.5 py-1 rounded-md bg-[#121316] border border-[#2E3038] text-[#F5F5F7]">
+            {branchDisplay}
+          </span>
+          <span className="px-2.5 py-1 rounded-md bg-[#121316] border border-[#2E3038] text-[#F5F5F7]">
+            {datesDisplay}
+          </span>
+          <span className="px-2.5 py-1 rounded-md bg-[#121316] border border-[#2E3038] text-[#F5F5F7]">
+            {guestsDisplay}
+          </span>
+          <span className="px-2.5 py-1 rounded-md bg-[#121316] border border-[#2E3038] text-[#F5F5F7]">
+            {flatTypeDisplay}
+          </span>
+          {purpose && purpose !== "all" && purposeLabels[purpose] && (
+            <span className="px-2.5 py-1 rounded-md bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] font-medium flex items-center gap-1">
+              <Sparkles className="w-3 h-3" />
+              <span>{purposeLabels[purpose]}</span>
+            </span>
+          )}
+        </div>
+
+        {/* Results Count */}
+        <div className="py-3 text-xs text-[#A1A1AA]">
+          Found <strong className="text-[#F5F5F7] font-medium">{matchingFlats.length}</strong> available flat {matchingFlats.length === 1 ? "option" : "options"}
+        </div>
+
+        {/* Flat Cards List */}
+        <div className="space-y-4">
+          {matchingFlats.length === 0 ? (
+            <div className="p-8 text-center rounded-xl bg-[#121316] border border-[#2E3038]">
+              <p className="text-sm font-sans text-[#F5F5F7]">
+                No flats match your exact combination of branch, flat type, or guest count.
+              </p>
+              <p className="text-xs font-sans text-[#A1A1AA] mt-2">
+                Try selecting &ldquo;All Branches&rdquo; or &ldquo;Any flat&rdquo; to explore all available residences.
+              </p>
+            </div>
+          ) : (
+            matchingFlats.map((flat) => {
+              const estimatedTotal = checkIn && checkOut ? flat.pricePerNight * nights : null;
+              const purposeText = purpose && purpose !== "all" && purposeLabels[purpose] ? ` for ${purposeLabels[purpose]}` : "";
+              const whatsappMessage = `Hello FLATEL Hospitality, I would like to inquire about booking the ${flat.name} at ${flat.branchName}${purposeText}${checkIn && checkOut ? ` for ${format(checkIn, "d MMM yyyy")} to ${format(checkOut, "d MMM yyyy")} (${nights} nights)` : ""}${adults !== null ? ` for ${adults} adults${childrenCount ? ` and ${childrenCount} children` : ""}` : ""}. Is this available?`;
+              const inquiryUrl = WHATSAPP_CONFIG.getUrl(whatsappMessage);
+
+              const detailParams = new URLSearchParams();
+              if (checkIn) detailParams.set("checkIn", format(checkIn, "yyyy-MM-dd"));
+              if (checkOut) detailParams.set("checkOut", format(checkOut, "yyyy-MM-dd"));
+              if (adults !== null && adults !== undefined) detailParams.set("adults", adults.toString());
+              if (childrenCount > 0) detailParams.set("kids", childrenCount.toString());
+              if (purpose && purpose !== "all") detailParams.set("purpose", purpose);
+              const detailQueryStr = detailParams.toString();
+              const flatDetailUrl = `/properties/${flat.slug}${detailQueryStr ? `?${detailQueryStr}` : ""}`;
+
+              return (
+                <div
+                  key={flat.id}
+                  className="p-4 sm:p-5 rounded-xl bg-[#121316] border border-[#2E3038] hover:border-[#D4AF37]/50 transition-colors"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                    {/* Left Thumbnail & Info */}
+                    <div className="flex gap-3.5">
+                      <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-lg overflow-hidden shrink-0 border border-[#2E3038]">
+                        <Image
+                          src={flat.imageUrl}
+                          alt={flat.name}
+                          fill
+                          className="object-cover"
+                          sizes="96px"
+                        />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[11px] font-mono font-medium text-[#C5A880] px-2 py-0.5 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/25">
+                            {flat.branchName}
+                          </span>
+                          <span className="text-[11px] font-mono text-[#A1A1AA]">
+                            Up to {flat.maxAdults} adults
+                          </span>
+                        </div>
+                        <h3 className="font-heading text-lg sm:text-xl font-medium text-[#F5F5F7] mt-1">
+                          {flat.name}
+                        </h3>
+                        <p className="text-xs font-sans text-[#A1A1AA] mt-1 max-w-md line-clamp-2">
+                          {flat.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Right Rate */}
+                    <div className="text-left sm:text-right shrink-0">
+                      <div className="text-xs text-[#A1A1AA]">Standard Rate</div>
+                      <div className="font-mono text-lg sm:text-xl font-bold text-[#D4AF37]">
+                        {formatPrice(flat.pricePerNight)}
+                        <span className="text-xs text-[#A1A1AA] font-normal"> / night</span>
+                      </div>
+                      {estimatedTotal !== null && (
+                        <div className="text-[11px] font-mono text-[#A1A1AA] mt-0.5">
+                          Est. Total: {formatPrice(estimatedTotal)} ({nights}N)
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Features */}
+                  <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-[#2E3038]">
+                    {flat.features.map((feat) => (
+                      <span
+                        key={feat}
+                        className="text-[10.5px] font-sans px-2 py-0.5 rounded-sm bg-[#1C1E24] text-[#A1A1AA] border border-[#2E3038]"
+                      >
+                        {feat}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex flex-col sm:flex-row items-center gap-2 mt-4">
+                    <a
+                      href={inquiryUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full sm:flex-1 min-h-[40px] px-3 py-2 rounded-lg bg-[#D4AF37] hover:bg-[#C5A880] text-[#121316] font-sans font-semibold text-xs tracking-wider uppercase flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5" />
+                      <span>Inquire via WhatsApp</span>
+                    </a>
+
+                    <a
+                      href={`tel:${CONTACT_PHONE.replace(/[^0-9+]/g, "")}`}
+                      className="w-full sm:w-auto min-h-[40px] px-3.5 py-2 rounded-lg bg-[#1C1E24] hover:bg-[#252830] border border-[#2E3038] text-[#F5F5F7] font-sans font-medium text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                      title="Call hotline"
+                    >
+                      <Phone className="w-3.5 h-3.5 text-[#D4AF37]" />
+                      <span>{CONTACT_PHONE}</span>
+                    </a>
+
+                    <Link
+                      href={flatDetailUrl}
+                      onClick={onClose}
+                      className="w-full sm:w-auto min-h-[40px] px-3 py-2 rounded-lg bg-[#1C1E24] hover:bg-[#252830] border border-[#2E3038] text-[#A1A1AA] hover:text-[#F5F5F7] font-sans text-xs flex items-center justify-center gap-1 transition-colors"
+                    >
+                      <span>Details</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
