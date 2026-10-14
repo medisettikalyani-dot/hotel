@@ -68,7 +68,7 @@ export const CATEGORY_CARDS: CategoryCardItem[] = [
     shortLabel: "Heritage Stays",
     tagline: "Near Charminar & Old City",
     imageUrl: "/images/branch-moghal-pura.jpg",
-    href: "/branches/moghal-pura",
+    href: "/#flats?purpose=tourism",
     icon: Compass,
     // Soft Rose / Blush Pink (like Card 2 in Image 2)
     pastelBg: "bg-[#FCECEE]",

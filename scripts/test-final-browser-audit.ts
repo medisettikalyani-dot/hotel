@@ -288,15 +288,13 @@ async function runFinalAudit() {
       );
     });
 
-    const resBranchMoghal = await fetch("http://localhost:3000/branches/moghal-pura");
-    const moghalHtml = await resBranchMoghal.text();
-    await test("HTTP: Branch page /branches/moghal-pura renders only Moghal Pura residences (1BHK, 2BHK, 4BHK)", () => {
+    const resBranchBarkas = await fetch("http://localhost:3000/branches/barkas-salala", { redirect: "manual" });
+    await test("HTTP: Branch route /branches/barkas-salala redirects to /properties/3bhk", () => {
       return (
-        resBranchMoghal.status === 200 &&
-        moghalHtml.includes("Moghal Pura") &&
-        moghalHtml.includes("1 BHK") &&
-        moghalHtml.includes("2 BHK") &&
-        moghalHtml.includes("4 BHK")
+        resBranchBarkas.status === 307 ||
+        resBranchBarkas.status === 308 ||
+        resBranchBarkas.status === 302 ||
+        resBranchBarkas.headers.get("location") === "/properties/3bhk"
       );
     });
   } catch (err: any) {

@@ -30,14 +30,14 @@ const BRANCH_ITEMS = [
   {
     name: "Barkas Salala",
     slug: "barkas-salala",
-    href: "/branches/barkas-salala",
+    href: "/properties/3bhk",
     location: "Near Chandrayangutta",
     description: "Two 3 BHK Residences · 6–9 Guests",
   },
   {
     name: "Moghal Pura",
     slug: "moghal-pura",
-    href: "/branches/moghal-pura",
+    href: "/#flats?branch=moghal-pura",
     location: "Near Charminar",
     description: "1, 2 & 4 BHK Residences · 2–12 Guests",
   },

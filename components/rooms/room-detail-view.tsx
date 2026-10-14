@@ -436,7 +436,7 @@ export function RoomDetailView({ room, requestedId }: RoomDetailViewProps) {
             <ChevronRight className="h-3 w-3 text-[#2E3038]" />
             {branch && (
               <>
-                <Link href={`/branches/${branch.slug}`} className="hover:text-white transition-colors">
+                <Link href={`/#flats?branch=${branch.slug}`} className="hover:text-white transition-colors">
                   {branch.name}
                 </Link>
                 <ChevronRight className="h-3 w-3 text-[#2E3038]" />
