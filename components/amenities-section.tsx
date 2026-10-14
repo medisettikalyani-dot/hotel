@@ -246,7 +246,7 @@ export function AmenitiesSection({ className }: AmenitiesSectionProps) {
     <div
       key={`${keyPrefix}-${item.id}-${index}`}
       onClick={() => setIsModalOpen(true)}
-      className="group relative rounded-xl sm:rounded-2xl bg-[#1C1E24] border border-[#2E3038] hover:border-[#D4AF37]/70 p-2.5 sm:p-3 flex flex-col items-center justify-between shadow-sm hover:shadow-[0_4px_20px_rgba(212,175,55,0.12)] transition-all duration-200 w-full h-[126px] sm:h-[136px] md:h-[144px] select-none cursor-pointer overflow-hidden"
+      className="group relative rounded-xl sm:rounded-2xl bg-[#1C1E24] border border-[#2E3038] hover:border-[#D4AF37]/70 p-2.5 sm:p-3 flex flex-col items-center justify-between shadow-sm hover:shadow-[0_4px_20px_rgba(212,175,55,0.12)] transition-all duration-200 w-[160px] sm:w-[185px] md:w-[200px] shrink-0 h-[126px] sm:h-[136px] md:h-[144px] select-none cursor-pointer overflow-hidden"
       title={`View ${item.name} details`}
     >
       {/* Subtle Warm Golden Ambient Radial Aura Behind 3D Icon */}
@@ -274,12 +274,6 @@ export function AmenitiesSection({ className }: AmenitiesSectionProps) {
     </div>
   );
 
-  // Compute filtered cards for the complete-card grid display
-  const displayedCards = React.useMemo(() => {
-    if (activeFilter === "all") return AMENITY_GRID_CARDS;
-    return AMENITY_GRID_CARDS.filter((card) => card.categoryIds.includes(activeFilter));
-  }, [activeFilter]);
-
   return (
     <section
       id="amenities"
@@ -295,85 +289,102 @@ export function AmenitiesSection({ className }: AmenitiesSectionProps) {
         aria-hidden="true"
       />
 
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10 relative z-10 space-y-6 sm:space-y-8">
+      <div className="w-full relative z-10 space-y-6 sm:space-y-8">
         
         {/* ========================================================== */}
-        {/* 1. TOP HEADER SECTION (IDENTICAL TO SCREENSHOT)            */}
+        {/* 1. TOP HEADER SECTION (IDENTICAL TO BRAND GUIDELINES)      */}
         {/* ========================================================== */}
-        <div className="text-center max-w-3xl mx-auto space-y-2.5">
-          {/* Subtle Top Gold Lines Framing the Brand Eyebrow */}
-          <div className="flex items-center justify-center gap-3 sm:gap-4">
-            <div className="h-[1px] w-8 sm:w-16 bg-gradient-to-r from-transparent to-[#D4AF37]/70" />
-            <span className="text-[10px] sm:text-[11px] font-sans font-bold tracking-[0.25em] text-[#D4AF37] uppercase">
-              THE FLATEL EXPERIENCE
-            </span>
-            <div className="h-[1px] w-8 sm:w-16 bg-gradient-to-l from-transparent to-[#D4AF37]/70" />
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10">
+          <div className="text-center max-w-3xl mx-auto space-y-2.5">
+            {/* Subtle Top Gold Lines Framing the Brand Eyebrow */}
+            <div className="flex items-center justify-center gap-3 sm:gap-4">
+              <div className="h-[1px] w-8 sm:w-16 bg-gradient-to-r from-transparent to-[#D4AF37]/70" />
+              <span className="text-[10px] sm:text-[11px] font-sans font-bold tracking-[0.25em] text-[#D4AF37] uppercase">
+                THE FLATEL EXPERIENCE
+              </span>
+              <div className="h-[1px] w-8 sm:w-16 bg-gradient-to-l from-transparent to-[#D4AF37]/70" />
+            </div>
+
+            {/* Main Heading */}
+            <h2
+              id="amenities-heading"
+              className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-semibold tracking-tight text-white leading-tight"
+            >
+              Everything you need to{" "}
+              <span className="font-serif italic text-[#F3AF3D] font-normal">
+                feel at home.
+              </span>
+            </h2>
+
+            {/* Subtitle */}
+            <p className="text-xs sm:text-sm text-[#A1A1AA] font-sans max-w-xl mx-auto leading-relaxed">
+              Thoughtfully designed spaces with modern amenities for a comfortable stay.
+            </p>
           </div>
-
-          {/* Main Heading */}
-          <h2
-            id="amenities-heading"
-            className="font-heading text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-semibold tracking-tight text-white leading-tight"
-          >
-            Everything you need to{" "}
-            <span className="font-serif italic text-[#F3AF3D] font-normal">
-              feel at home.
-            </span>
-          </h2>
-
-          {/* Subtitle */}
-          <p className="text-xs sm:text-sm text-[#A1A1AA] font-sans max-w-xl mx-auto leading-relaxed">
-            Thoughtfully designed spaces with modern amenities for a comfortable stay.
-          </p>
         </div>
 
         {/* ========================================================== */}
-        {/* 2. FILTER PILLS (IDENTICAL TO SCREENSHOT)                  */}
+        {/* 2. FILTER PILLS (CATEGORY SWITCHING)                       */}
         {/* ========================================================== */}
-        <div className="flex items-center justify-start lg:justify-center gap-2 sm:gap-2.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pb-1 pt-0.5 -mx-4 px-4 sm:mx-0 sm:px-0">
-          {FILTER_TABS.map((tab) => {
-            const isActive = activeFilter === tab.id;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setActiveFilter(tab.id)}
-                className={cn(
-                  "px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-sans tracking-wide whitespace-nowrap transition-all duration-200 cursor-pointer shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]",
-                  isActive
-                    ? "bg-[#E3B558] text-[#121316] font-semibold shadow-md shadow-[#E3B558]/20"
-                    : "bg-[#181A20] text-[#A1A1AA] hover:text-white border border-[#2E3038] hover:border-[#D4AF37]/40"
-                )}
-                aria-pressed={isActive}
-              >
-                {tab.label} ({tab.count})
-              </button>
-            );
-          })}
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10">
+          <div className="flex items-center justify-start lg:justify-center gap-2 sm:gap-2.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pb-1 pt-0.5 -mx-4 px-4 sm:mx-0 sm:px-0">
+            {FILTER_TABS.map((tab) => {
+              const isActive = activeFilter === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveFilter(tab.id)}
+                  className={cn(
+                    "px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-sans tracking-wide whitespace-nowrap transition-all duration-200 cursor-pointer shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]",
+                    isActive
+                      ? "bg-[#E3B558] text-[#121316] font-semibold shadow-md shadow-[#E3B558]/20"
+                      : "bg-[#181A20] text-[#A1A1AA] hover:text-white border border-[#2E3038] hover:border-[#D4AF37]/40"
+                  )}
+                  aria-pressed={isActive}
+                >
+                  {tab.label} ({tab.count})
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* ========================================================== */}
-        {/* 3. POLISHED COMPLETE-CARD BALANCED RESPONSIVE GRID         */}
+        {/* 3. DUAL-LINE CONTINUOUS MARQUEE SHOWCASE                   */}
+        {/*    Line 1: Moves Left | Line 2: Moves Right                */}
         {/* ========================================================== */}
-        <div className="w-full">
-          {/* Responsive Grid: 2 cols on mobile, 3 on sm, 4 on md, 6 on desktop */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5 sm:gap-3.5 md:gap-4">
-            {displayedCards.map((item, idx) => renderCard(item, "grid", idx))}
-          </div>
-
-          {/* Test and accessibility bindings to preserve existing test suite contracts */}
+        <div className="relative w-full overflow-hidden py-1 sm:py-2 space-y-3 sm:space-y-4">
+          {/* Subtle Left Vignette Fade Mask */}
           <div
-            className="hidden sr-only animate-marquee-left animate-marquee-right"
-            data-line1={line1Items.length}
-            data-line2={line2Items.length}
+            className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 sm:w-16 md:w-24 bg-gradient-to-r from-[#121316] to-transparent z-10"
             aria-hidden="true"
           />
+          {/* Subtle Right Vignette Fade Mask */}
+          <div
+            className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 sm:w-16 md:w-24 bg-gradient-to-l from-[#121316] to-transparent z-10"
+            aria-hidden="true"
+          />
+
+          {/* Line 1: Moving Left */}
+          <div className="overflow-hidden w-full flex">
+            <div className="animate-marquee-left flex items-center gap-3 sm:gap-3.5 md:gap-4 pr-3 sm:pr-3.5 md:pr-4">
+              {line1Items.map((item, idx) => renderCard(item, "row1", idx))}
+            </div>
+          </div>
+
+          {/* Line 2: Moving Right */}
+          <div className="overflow-hidden w-full flex">
+            <div className="animate-marquee-right flex items-center gap-3 sm:gap-3.5 md:gap-4 pr-3 sm:pr-3.5 md:pr-4">
+              {line2Items.map((item, idx) => renderCard(item, "row2", idx))}
+            </div>
+          </div>
         </div>
 
         {/* ========================================================== */}
-        {/* 4. EXPLORE ALL 29 AMENITIES BUTTON (IDENTICAL TO SCREENSHOT) */}
+        {/* 4. EXPLORE ALL 29 AMENITIES BUTTON                         */}
         {/* ========================================================== */}
-        <div className="flex items-center justify-center pt-1 sm:pt-2">
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10 flex items-center justify-center pt-1 sm:pt-2">
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
