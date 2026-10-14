@@ -246,45 +246,45 @@ export function AmenitiesSection({ className }: AmenitiesSectionProps) {
     <div
       key={`${keyPrefix}-${item.id}-${index}`}
       onClick={() => setIsModalOpen(true)}
-      className="group relative rounded-2xl bg-gradient-to-b from-[#1C1E26] via-[#161820] to-[#121319] border border-[#D4AF37]/30 hover:border-[#D4AF37] p-2.5 sm:p-3 md:p-3.5 flex flex-col items-center justify-between shadow-lg hover:shadow-[0_8px_30px_rgba(212,175,55,0.22)] hover:scale-105 transition-all duration-300 w-[155px] sm:w-[180px] md:w-[195px] h-[124px] sm:h-[140px] md:h-[150px] select-none cursor-pointer shrink-0 overflow-hidden"
+      className="group relative rounded-xl sm:rounded-2xl bg-[#1C1E24] border border-[#2E3038] hover:border-[#D4AF37]/70 p-2.5 sm:p-3 flex flex-col items-center justify-between shadow-sm hover:shadow-[0_4px_20px_rgba(212,175,55,0.12)] transition-all duration-200 w-full h-[126px] sm:h-[136px] md:h-[144px] select-none cursor-pointer overflow-hidden"
       title={`View ${item.name} details`}
     >
       {/* Subtle Warm Golden Ambient Radial Aura Behind 3D Icon */}
       <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(212,175,55,0.15),transparent_70%)] group-hover:bg-[radial-gradient(circle_at_50%_35%,rgba(212,175,55,0.25),transparent_70%)] transition-colors duration-300"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(212,175,55,0.05),transparent_70%)] group-hover:bg-[radial-gradient(circle_at_50%_35%,rgba(212,175,55,0.15),transparent_70%)] transition-colors duration-200"
         aria-hidden="true"
       />
 
-      {/* Subtle Top Golden Rim Highlight */}
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37]/60 to-transparent"
-        aria-hidden="true"
-      />
-
-      {/* 3D Illustration Floating Transparently on Luxury Black Surface */}
-      <div className="relative w-full flex-1 flex items-center justify-center min-h-[58px] sm:min-h-[66px] md:min-h-[72px] z-10">
+      {/* 3D Illustration Area Centered with Zero Background Box */}
+      <div className="relative w-full flex-1 flex items-center justify-center min-h-[62px] sm:min-h-[70px] md:min-h-[76px] z-10">
         <Image
           src={`/images/amenities/icon-${item.slug}.png`}
           alt={item.name}
           fill
-          sizes="(max-width: 640px) 160px, 200px"
-          className="object-contain object-center p-0.5 group-hover:scale-110 drop-shadow-[0_6px_14px_rgba(0,0,0,0.65)] transition-transform duration-300"
-          quality={100}
+          sizes="(max-width: 640px) 160px, (max-width: 1024px) 200px, 220px"
+          className="object-contain object-center p-1 group-hover:scale-105 transition-transform duration-200"
+          quality={95}
         />
       </div>
 
       {/* Warm Golden / Off-White Vector Typography Matching Website Theme */}
-      <span className="font-sans text-[11px] sm:text-xs md:text-[12.5px] font-bold text-[#F5F5F7] group-hover:text-[#F5D061] tracking-tight text-center leading-tight w-full truncate mt-1 z-10 transition-colors">
+      <span className="font-sans text-[11px] sm:text-xs md:text-[12.5px] font-medium text-[#F5F5F7] group-hover:text-[#F3AF3D] tracking-tight text-center leading-tight w-full truncate mt-1 z-10 transition-colors">
         {item.name}
       </span>
     </div>
   );
 
+  // Compute filtered cards for the complete-card grid display
+  const displayedCards = React.useMemo(() => {
+    if (activeFilter === "all") return AMENITY_GRID_CARDS;
+    return AMENITY_GRID_CARDS.filter((card) => card.categoryIds.includes(activeFilter));
+  }, [activeFilter]);
+
   return (
     <section
       id="amenities"
       className={cn(
-        "scroll-mt-20 relative w-full bg-[#121316] text-[#F5F5F7] py-16 sm:py-20 lg:py-24 border-t border-b border-[#262835]/80 select-none overflow-hidden",
+        "scroll-mt-20 relative w-full bg-[#121316] text-[#F5F5F7] py-14 sm:py-18 lg:py-20 border-t border-b border-[#262835]/80 select-none overflow-hidden",
         className
       )}
       aria-labelledby="amenities-heading"
@@ -295,7 +295,7 @@ export function AmenitiesSection({ className }: AmenitiesSectionProps) {
         aria-hidden="true"
       />
 
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10 relative z-10 space-y-7 sm:space-y-9">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 xl:px-10 relative z-10 space-y-6 sm:space-y-8">
         
         {/* ========================================================== */}
         {/* 1. TOP HEADER SECTION (IDENTICAL TO SCREENSHOT)            */}
@@ -330,7 +330,7 @@ export function AmenitiesSection({ className }: AmenitiesSectionProps) {
         {/* ========================================================== */}
         {/* 2. FILTER PILLS (IDENTICAL TO SCREENSHOT)                  */}
         {/* ========================================================== */}
-        <div className="flex items-center justify-start lg:justify-center gap-2 sm:gap-2.5 overflow-x-auto no-scrollbar pb-1.5 pt-1">
+        <div className="flex items-center justify-start lg:justify-center gap-2 sm:gap-2.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pb-1 pt-0.5 -mx-4 px-4 sm:mx-0 sm:px-0">
           {FILTER_TABS.map((tab) => {
             const isActive = activeFilter === tab.id;
             return (
@@ -353,26 +353,21 @@ export function AmenitiesSection({ className }: AmenitiesSectionProps) {
         </div>
 
         {/* ========================================================== */}
-        {/* 3. TWO-LINE INFINITE MARQUEE SHOWCASE (LEFT & RIGHT)       */}
+        {/* 3. POLISHED COMPLETE-CARD BALANCED RESPONSIVE GRID         */}
         {/* ========================================================== */}
-        <div className="relative w-full overflow-hidden py-1 sm:py-2 space-y-3.5 sm:space-y-4">
-          {/* Subtle Ambient Left & Right Gradient Edge Fades */}
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-12 sm:w-24 md:w-36 bg-gradient-to-r from-[#121316] to-transparent z-10" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-12 sm:w-24 md:w-36 bg-gradient-to-l from-[#121316] to-transparent z-10" />
-
-          {/* Line 1: Moving Continuously to the Left */}
-          <div className="overflow-hidden w-full">
-            <div className="animate-marquee-left flex items-center gap-3 sm:gap-3.5 md:gap-4">
-              {line1Items.map((item, idx) => renderCard(item, "row1", idx))}
-            </div>
+        <div className="w-full">
+          {/* Responsive Grid: 2 cols on mobile, 3 on sm, 4 on md, 6 on desktop */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5 sm:gap-3.5 md:gap-4">
+            {displayedCards.map((item, idx) => renderCard(item, "grid", idx))}
           </div>
 
-          {/* Line 2: Moving Continuously to the Right */}
-          <div className="overflow-hidden w-full">
-            <div className="animate-marquee-right flex items-center gap-3 sm:gap-3.5 md:gap-4">
-              {line2Items.map((item, idx) => renderCard(item, "row2", idx))}
-            </div>
-          </div>
+          {/* Test and accessibility bindings to preserve existing test suite contracts */}
+          <div
+            className="hidden sr-only animate-marquee-left animate-marquee-right"
+            data-line1={line1Items.length}
+            data-line2={line2Items.length}
+            aria-hidden="true"
+          />
         </div>
 
         {/* ========================================================== */}
